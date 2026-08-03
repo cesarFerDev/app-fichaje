@@ -44,3 +44,4 @@ Read [AGENTS.md](AGENTS.md) before contributing. The project rules and decisions
 - [Domain rules](docs/domain.md)
 - [Code style](docs/code-style.md)
 - [Testing strategy](docs/testing-strategy.md)
+- [Android tester APK guide](docs/android-apk.md)
