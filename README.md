@@ -1,46 +1,69 @@
 # App Fichaje
 
-An offline-first, mobile-focused work-time tracker for individual agricultural workers. It helps users record workdays and breaks, estimate earnings, and review their time without acting as an official payroll system.
+App Fichaje is an offline-first, mobile-focused work-time tracker for
+individuals who do not have another way to record their hours. It helps a user
+track shifts and breaks, correct historical entries, estimate monthly earnings,
+and share reports. It is a personal estimation tool, not an official payroll or
+attendance system.
 
-## Status
+The React application is designed for phones and will be packaged as an Android
+application with Capacitor. Version 1 has no backend or user accounts; records
+remain on the device unless the user explicitly exports them.
 
-The project is in its planning and foundation stage. Product functionality has not been implemented yet.
+## Project status
 
-The planned first version includes local work-record storage, calendar and report views, hourly-rate settings and overrides, non-working-day status, multilingual UI, and JSON backup/restore.
+The repository is in its planning and foundation stage. The source tree and
+initial toolchain exist, but product features, persistence, automated tests, and
+the Android project have not been implemented yet.
 
-## Technology
+Planned version 1 capabilities include:
 
-- React and TypeScript
-- Vite
-- Material UI
-- Capacitor (planned Android packaging)
-- IndexedDB (planned local persistence)
+- A monthly calendar with today's start, break, resume, and finish actions.
+- Recovery of active shifts and breaks after the app closes or is suspended.
+- Editing previous days using start, end, and break intervals.
+- Categorized rest, public-holiday, vacation, sick, and other absence days.
+- A default hourly rate plus rate and currency snapshots per workday.
+- Simplified and extended monthly reports, viewable in-app and exportable as PDF
+  or CSV.
+- Spanish and English, light/dark/system themes, and a curated currency list.
+- Versioned JSON backup export and validated, atomic restore.
 
-## Run locally
+## Installed technology
 
-Install dependencies and start the development server:
+- React 19 and TypeScript 6
+- Vite 8
+- React Router 8
+- Material UI 9 with Emotion
+- react-datepicker and date-fns
+- React Hook Form and Zod
+- Capacitor Core 8
+- Vitest, ESLint, and Prettier
+
+Some planned capabilities still require dependencies, including Capacitor's CLI
+and Android/file-sharing packages, localization, report generation, React DOM
+testing utilities, and Playwright. Raw IndexedDB will be used intentionally
+without a wrapper so its API, transactions, and migrations can be learned and
+kept behind a repository boundary.
+
+## Local development
+
+Use pnpm for dependency and script commands.
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Useful validation commands:
+Available validation commands are:
 
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm format:check
 pnpm test:run
 pnpm build
 ```
 
-At the current baseline, tests and the production build are not yet passing because the scaffold has no test files and `src/app/App.tsx` imports a missing stylesheet.
-
-## Documentation
-
-Read [AGENTS.md](AGENTS.md) before contributing. The project rules and decisions are documented in:
-
-- [Architecture](docs/architecture.md)
-- [Domain rules](docs/domain.md)
-- [Code style](docs/code-style.md)
-- [Testing strategy](docs/testing-strategy.md)
+`pnpm test:run` may report that no tests exist until the first test suite is
+added. Treat the scripts in `package.json` as the source of truth while the
+foundation is evolving.
