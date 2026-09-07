@@ -47,7 +47,8 @@ kept behind a repository boundary.
 
 ## Local development
 
-Use pnpm for dependency and script commands.
+Use Node 24.20.0 and pnpm 11.25.0. The repository pins both versions through
+`.node-version` and the `packageManager` field.
 
 ```bash
 pnpm install
@@ -60,10 +61,20 @@ Available validation commands are:
 pnpm typecheck
 pnpm lint
 pnpm format:check
-pnpm test:run
+pnpm test
+pnpm test:watch
 pnpm build
+pnpm run check
 ```
 
-`pnpm test:run` may report that no tests exist until the first test suite is
-added. Treat the scripts in `package.json` as the source of truth while the
-foundation is evolving.
+`pnpm run check` is the canonical fast quality gate and covers type checking,
+linting, formatting, and deterministic tests. The build remains a separate gate.
+Until the first meaningful suite is added, the deterministic test command
+temporarily accepts a repository with no tests.
+
+## Project documentation
+
+- [Documentation index](docs/README.md)
+- [Product scope](docs/product.md)
+- [Architecture](docs/architecture.md)
+- [Engineering profile and playbook deviations](docs/engineering-profile.md)
