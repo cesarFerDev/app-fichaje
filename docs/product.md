@@ -1,7 +1,8 @@
 # Product — App Fichaje
 
-**Status:** planning and foundation  
-**Last reviewed:** 2026-09-07
+**Status:** first MVP slice approved for implementation
+
+**Last reviewed:** 2026-09-08
 
 ## Problem
 
@@ -16,6 +17,15 @@ employer attendance system.
 
 One person tracking their own working time on a phone, especially when their
 employer or work arrangement provides no suitable record.
+
+The intended audience spans very different levels of digital confidence,
+including people in manual occupations who may have little familiarity with
+smartphone interaction patterns. The core daily flow must therefore remain
+direct, legible, and usable without prior explanation.
+
+The phone is the primary context, but the web application is also intended to
+gain a deliberate desktop composition. A separate desktop design is not part of
+the first MVP slice.
 
 ## Goals
 
@@ -38,8 +48,11 @@ employer or work arrangement provides no suitable record.
 ## Current scope
 
 The repository currently contains the React/Vite toolchain and a minimal empty
-application shell. Product features, IndexedDB persistence, automated tests, and
-the Android project have not yet been implemented.
+application shell. The approved first slice covers mandatory rate onboarding,
+starting and finishing today's workday, persist-first IndexedDB storage, and
+recovery after reload. Its approved visual direction is documented in
+[`design.md`](design.md). Product features, IndexedDB persistence, automated
+tests, and the Android project have not yet been implemented.
 
 ## Planned v1 flows
 
@@ -67,6 +80,8 @@ the Android project have not yet been implemented.
 - Report and UI totals share the same domain calculations.
 - Spanish and English, mobile accessibility, and no-network behavior are v1
   product requirements.
+- The first MVP is mobile-first; later desktop work should reuse product and
+  domain behavior while adapting navigation and composition to wider viewports.
 
 Detailed lifecycle, money, reporting, and restore rules live in
 [`domain.md`](domain.md).
@@ -75,12 +90,17 @@ Detailed lifecycle, money, reporting, and restore rules live in
 
 ### Short term
 
-- Establish domain types and pure lifecycle/date/money calculations.
-- Implement the IndexedDB adapter and recovery-aware application state.
-- Build the calendar and daily work controls with agreed automated tests.
+- Deliver the approved first vertical slice for onboarding, start, finish, and
+  recovery with agreed automated tests.
+- Validate its domain, persistence, application-state, accessibility, and visual
+  boundaries before broadening the product surface.
+- Add the monthly calendar only when it provides real history/selection behavior
+  rather than a decorative shell.
 
 ### Medium term
 
 - Add historical editing, absences, settings, localization, and theming.
+- Define the desktop composition once the application has enough real
+  destinations and workflows to justify it.
 - Add monthly reports and shared PDF/CSV view models.
 - Add validated atomic backup/restore and the Android packaging boundary.

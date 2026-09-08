@@ -6,10 +6,12 @@ the global defaults. It is not a backlog.
 ## Playbook alignment
 
 - Canonical playbook: `cesarFerDev/software-engineering-playbook`
-- Last reviewed against version: `0.2.1`
-- Last review date: `2026-09-07`
+- Last reviewed against version: `0.3.0`
+- Last review date: `2026-09-08`
 - Aligned foundations: React, TypeScript strict mode, Vite, MUI, pnpm, Zod,
-  local-first simplicity, minimal dependencies, and no v1 backend.
+  local-first simplicity, minimal dependencies, no v1 backend, proportional
+  project lifecycle, and delegated visual implementation with César retaining
+  product/UX constraints and final approval.
 
 ## Defaults overridden
 
@@ -37,6 +39,10 @@ the global defaults. It is not a backlog.
 - React context for hydrated offline data does not conflict with the playbook's
   TanStack Query guidance: v1 has no server state and TanStack Query is not
   installed.
+- MUI was already installed before the playbook 0.3.0 visual-exploration
+  workflow, but the approved `Precisión serena` direction has now validated its
+  continued use. A small project theme will customize it without creating a
+  parallel design system.
 - `eslint.config.js` is the canonical ESLint configuration. The redundant
   `eslint.config.ts` is retained unchanged in intent for this minimal adoption;
   removal is a separate cleanup decision.

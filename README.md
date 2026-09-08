@@ -12,9 +12,10 @@ remain on the device unless the user explicitly exports them.
 
 ## Project status
 
-The repository is in its planning and foundation stage. The source tree and
-initial toolchain exist, but product features, persistence, automated tests, and
-the Android project have not been implemented yet.
+The first MVP vertical slice and its visual direction are approved for
+implementation. The source tree and initial toolchain exist, but product
+features, persistence, automated tests, and the Android project have not been
+implemented yet.
 
 Planned version 1 capabilities include:
 
@@ -77,4 +78,5 @@ temporarily accepts a repository with no tests.
 - [Documentation index](docs/README.md)
 - [Product scope](docs/product.md)
 - [Architecture](docs/architecture.md)
+- [Visual direction](docs/design.md)
 - [Engineering profile and playbook deviations](docs/engineering-profile.md)

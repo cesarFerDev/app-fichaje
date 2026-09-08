@@ -6,6 +6,8 @@ able to reconstruct the project without relying on historical chats.
 - [`product.md`](product.md) — current problem, user, scope, and constraints.
 - [`architecture.md`](architecture.md) — current technical state and intended
   boundaries that already constrain implementation.
+- [`design.md`](design.md) — approved visual direction and current UI-foundation
+  constraints.
 - [`domain.md`](domain.md) — detailed product invariants and calculations.
 - [`code-style.md`](code-style.md) — local implementation conventions.
 - [`testing-strategy.md`](testing-strategy.md) — current gates and planned test

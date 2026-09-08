@@ -3,17 +3,18 @@
 ## Project purpose
 
 App Fichaje is an offline-first, mobile-focused work-time tracker for one person.
-It is currently a learning project in its planning and foundation stage: the
-toolchain and minimal React shell exist, while product features and persistence
-are still planned.
+It is currently a learning project with an approved first MVP slice and visual
+direction: the toolchain and minimal React shell exist, while product behavior
+and persistence have not yet been implemented.
 
 ## Canonical context
 
 - Global engineering playbook: `cesarFerDev/software-engineering-playbook`
-- Playbook version reviewed against: `0.2.1`
+- Playbook version reviewed against: `0.3.0`
 - Global learning source: `cesarFerDev/software-engineering-university`
 - Project-facing learning interface:
   `cesarFerDev/software-engineering-university/academic/learning-progress.md`
+- Project lifecycle guidance: playbook `docs/project-lifecycle.md`
 - Local docs index: `docs/README.md`
 - Product: `docs/product.md`
 - Architecture: `docs/architecture.md`
@@ -30,6 +31,11 @@ and playbook documents relevant to the task. Repository evidence is the source
 of truth. When learning context materially affects a decision, start with the
 project-facing learning interface; if the referenced snapshot does not contain
 it, report that limitation and do not invent competency evidence.
+
+For broad project inception, product discovery, roadmap work, UX architecture,
+visual exploration, or UI-foundation decisions, follow the project lifecycle
+without forcing task-spec workflow. Use `plan-mentor` after a concrete
+non-trivial task has been selected and needs an approved spec.
 
 ## Commands
 
@@ -86,6 +92,9 @@ For learning-critical work:
 - César implements the core logic.
 - Agents may scaffold, configure, style, write agreed tests, and implement
   already-delegable or repetitive mechanics.
+- Visual design, styling, and presentational UI implementation are agent-owned
+  unless César explicitly makes them a learning focus. César owns product/UX
+  constraints, evaluates valid alternatives, and approves the final direction.
 - New decisions found during delegated work return to César.
 - Agents may append meaningful observations to `docs/learning-evidence.md`, but
   never change global competency or curriculum state.
@@ -110,10 +119,11 @@ after a direct explanation. Do not disguise a complete solution as a hint.
 ## Task workflow
 
 Planning and review workflows do not change production code unless César
-explicitly changes mode. Non-trivial work follows:
+explicitly changes mode. Project inception/discovery and any required visual
+foundation precede this loop. Non-trivial selected-task work follows:
 
 ```text
-proposal -> plan-mentor -> approved temporary spec
+selected task -> plan-mentor -> approved temporary spec
 -> César/agent split by learning value -> agreed tests/checks
 -> review-mentor -> corrections/re-review -> learning evidence when meaningful
 -> César validates the main flow -> PR -> squash merge

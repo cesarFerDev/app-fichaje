@@ -1,7 +1,8 @@
 # Architecture — App Fichaje
 
-**Last reviewed:** 2026-09-07  
-**Playbook version:** 0.2.1
+**Last reviewed:** 2026-09-08
+
+**Playbook version:** 0.3.0
 
 ## Context and boundaries
 
@@ -225,6 +226,29 @@ use translation keys once localization is implemented. Touch targets, keyboard
 operation, visible focus, dialog focus, error announcements, and date-picker
 behavior are acceptance concerns rather than optional polish.
 
+## Approved UI foundation
+
+The approved visual direction is `Precisión serena`, documented in
+[`design.md`](design.md). It was selected after product, interaction, and
+accessibility constraints were defined, so MUI remains the chosen UI library
+rather than an unvalidated bootstrap default.
+
+The initial UI foundation will be deliberately small: a project theme owns
+repeated color, typography, spacing, focus, and interaction-state tokens;
+presentational components use MUI directly unless a wrapper adds real product
+semantics. The daily screen uses a neutral base, graphite text, teal as its only
+functional accent, a large primary action, and a complete circular status halo
+that must never imply progress toward a target duration.
+
+The MVP is mobile-first and must remain usable from 320 px. Its composition
+should be able to center or reflow on wider viewports without implementing a
+separate desktop design in this slice.
+
+Although the approved future direction uses icon-and-label navigation, the
+first slice renders no application navigation because reports and settings are
+not yet functional. Do not add placeholder routes or disabled destinations to
+simulate the later shell.
+
 ## External boundaries
 
 | Boundary                   | Current state     | Intended contract and validation                                                                    |
@@ -260,12 +284,13 @@ artifact generation, and rollback/release strategy.
 
 ## Temporary decisions and review triggers
 
-| Decision                                                | Why now                                                      | Revisit when                                                                      |
-| ------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| Keep `src/features` rather than rename to `src/domains` | Avoid aesthetic restructuring before domain ownership exists | Multiple implemented modules expose real ownership or cross-feature dependencies  |
-| Use raw IndexedDB behind an adapter                     | Deliberate learning experiment with no current wrapper need  | One migration or atomic restore has been implemented and tested                   |
-| Hydrate offline records into local React state          | Simple fit for a no-backend application                      | Data volume, rendering behavior, or synchronization needs show a concrete problem |
-| Leave `BrowserRouter` in the scaffold                   | Native packaging is not implemented in this adoption         | Before creating the Android project                                               |
+| Decision                                                | Why now                                                                        | Revisit when                                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Keep `src/features` rather than rename to `src/domains` | Avoid aesthetic restructuring before domain ownership exists                   | Multiple implemented modules expose real ownership or cross-feature dependencies  |
+| Use raw IndexedDB behind an adapter                     | Deliberate learning experiment with no current wrapper need                    | One migration or atomic restore has been implemented and tested                   |
+| Hydrate offline records into local React state          | Simple fit for a no-backend application                                        | Data volume, rendering behavior, or synchronization needs show a concrete problem |
+| Leave `BrowserRouter` in the scaffold                   | Native packaging is not implemented in this adoption                           | Before creating the Android project                                               |
+| Retain MUI after visual exploration                     | The approved restrained tool UI can be expressed with its theme and primitives | Repeated friction with the approved direction or accessibility requirements       |
 
 Additional tooling deviations are recorded in
 [`engineering-profile.md`](engineering-profile.md).
