@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router";
 import { createRoot } from "react-dom/client";
 import App from "./app/App";
+import { AppProviders } from "./app/providers/AppProviders";
 
 const root = document.getElementById("root");
 
@@ -9,7 +10,9 @@ if (!root) {
 }
 
 createRoot(root).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <AppProviders>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </AppProviders>,
 );

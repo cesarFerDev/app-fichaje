@@ -1,0 +1,27 @@
+{
+  "onboarding": {
+    "description": "Confirm your hourly rate before starting your first workday.",
+    "hourlyRate": {
+      "help": "You can change it before continuing.",
+      "label": "Hourly rate",
+      "unit": "EUR/h"
+    },
+    "submit": "Confirm rate",
+    "submitting": "Saving rate",
+    "title": "Set your hourly rate"
+  },
+  "workday": {
+    "actions": {
+      "finish": "Finish workday",
+      "start": "Start workday"
+    },
+    "feedback": {
+      "entrySaved": "Start time saved locally"
+    },
+    "status": {
+      "active": "Workday in progress",
+      "completed": "Workday completed",
+      "empty": "No workday started"
+    }
+  }
+}
