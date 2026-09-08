@@ -35,6 +35,9 @@ correctness tools; do not suppress them without documenting a concrete reason.
 - Tests use `*.test.ts` or `*.test.tsx`; Playwright journeys use `*.spec.ts`.
 - Avoid generic buckets such as `helpers.ts` when a domain-specific name is
   available.
+- Domain components use one folder per component containing the component,
+  colocated test, and `styles.ts` when it has meaningful styling.
+- Component-local props use the concise name `Props`.
 
 ## React
 
@@ -47,17 +50,19 @@ correctness tools; do not suppress them without documenting a concrete reason.
   values that can be derived during render.
 - Forms use React Hook Form and Zod schemas. Map validation errors to localized,
   accessible helper text.
-- Feature pages must cover loading, empty, error, and ready states explicitly.
+- Domain pages must cover loading, empty, error, and ready states explicitly.
 - Use semantic elements and MUI primitives before custom click handlers on
   generic containers.
+- Keep one- or two-property `sx` adjustments local. Move larger meaningful style
+  groups to named exports in the component's colocated `styles.ts`.
 
-## Imports and feature APIs
+## Imports and domain APIs
 
-Follow `app -> pages -> features -> shared`.
+Follow `app -> pages -> domains -> shared`.
 
-- A feature exposes supported components, hooks, and types through `index.ts`.
-- Consumers do not import another feature's internal path.
-- Relative imports are acceptable inside a feature. Introduce path aliases only
+- A domain exposes supported components, hooks, and types through `index.ts`.
+- Consumers do not import another domain's internal path.
+- Relative imports are acceptable inside a domain. Introduce path aliases only
   when configured consistently for TypeScript, Vite, ESLint, Vitest, and
   Playwright.
 - An `index.ts` is an intentional public boundary, not a wildcard export of
@@ -92,6 +97,13 @@ Follow `app -> pages -> features -> shared`.
 
 - No user-visible text is hard-coded in a component, validator, notification,
   report, or export template.
+- React components obtain owned copy through `useTranslation`.
+- Translation JSON files live with their owning domain, separated by supported
+  language. `src/app/i18n` initializes i18next and composes domain resources.
+- Keep translation keys alphabetically ordered and structurally equal between
+  supported languages with `pnpm i18n:check` and `pnpm i18n:format`.
+- The initial language follows the first supported device preference and falls
+  back to Spanish. Tests choose a language explicitly when wording matters.
 - Translation keys describe meaning rather than the original wording.
 - Prefer visible labels. Icon-only actions require localized accessible names.
 - Interactive targets must be comfortable for touch, keyboard reachable on the
@@ -99,6 +111,10 @@ Follow `app -> pages -> features -> shared`.
 - Status must not be conveyed by color alone.
 - Dialog focus, error announcements, and date-picker keyboard behavior require
   explicit manual and automated checks.
+
+Because `erasableSyntaxOnly` is enabled, named closed domain/application values
+use an exported `as const` object plus its derived union type instead of a
+TypeScript enum. Purely visual variants reuse library types or remain local.
 
 ## Errors and user feedback
 

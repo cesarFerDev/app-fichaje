@@ -47,12 +47,14 @@ the first MVP slice.
 
 ## Current scope
 
-The repository currently contains the React/Vite toolchain and a minimal empty
-application shell. The approved first slice covers mandatory rate onboarding,
-starting and finishing today's workday, persist-first IndexedDB storage, and
-recovery after reload. Its approved visual direction is documented in
-[`design.md`](design.md). Product features, IndexedDB persistence, automated
-tests, and the Android project have not yet been implemented.
+The repository currently contains the React/Vite toolchain, application
+providers, domain-owned Spanish and English resources, and initial tested
+presentational components. The application shell still renders no product flow.
+The approved first slice covers mandatory rate onboarding, starting and
+finishing today's workday, persist-first IndexedDB storage, and recovery after
+reload. Its approved visual direction is documented in [`design.md`](design.md).
+Domain behavior, IndexedDB persistence, integration, and the Android project
+have not yet been implemented.
 
 ## Planned v1 flows
 

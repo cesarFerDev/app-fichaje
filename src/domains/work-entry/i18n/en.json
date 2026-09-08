@@ -13,11 +13,13 @@
   "workday": {
     "actions": {
       "finish": "Finish workday",
+      "finishing": "Saving workday",
       "start": "Start workday"
     },
     "feedback": {
       "entrySaved": "Start time saved locally"
     },
+    "startTime": "Started · {{time}}",
     "status": {
       "active": "Workday in progress",
       "completed": "Workday completed",

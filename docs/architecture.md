@@ -23,12 +23,17 @@ report, and restore rules are in [`domain.md`](domain.md).
 The current repository is a foundation, not the system described in the planned
 sections below.
 
-- `src/main.tsx` mounts an empty `App` inside `BrowserRouter`.
+- `src/main.tsx` mounts `AppProviders` and `BrowserRouter` around an empty `App`.
 - `src/app/App.tsx` renders an empty fragment; `src/app/Router.tsx` is empty.
-- Feature, page, shared, provider, persistence, report, export, localization,
-  and native adapter modules do not exist yet.
+- `src/app/providers` composes the MUI theme and i18next providers.
+- `src/app/i18n` registers domain resources, resolves the first supported device
+  language, and falls back to Spanish.
+- `src/domains/work-entry` owns Spanish/English translations and the initial
+  active-workday halo and finish-action presentation components.
+- Page, persistence, report, export, and native adapter modules do not exist yet.
 - No IndexedDB database or application state store has been implemented.
-- Vitest is installed, but there are no automated tests yet.
+- Vitest, jsdom, and React Testing Library exercise the current provider, i18n,
+  accessibility, and pending-interaction contracts.
 - Capacitor Core is installed, but the CLI, Android project, and native plugins
   are not.
 
@@ -42,7 +47,7 @@ installed package is not evidence that its planned boundary already exists.
 - Make persisted records and timestamps the single source of truth.
 - Keep domain calculations pure and shared by UI and exports.
 - Isolate IndexedDB, browser file APIs, and Capacitor behind explicit adapters.
-- Preserve a simple dependency direction and small feature public APIs.
+- Preserve a simple dependency direction and small domain public APIs.
 - Validate untrusted storage, form, and import data at their boundaries.
 
 ## Non-goals
@@ -60,7 +65,7 @@ The following diagram is the agreed v1 design target, not current implementation
 User
   |
   v
-React application (MUI, feature modules, local app state)
+React application (MUI, domain modules, local app state)
   |                         |
   v                         v
 Persistence adapter     Export adapters
@@ -76,15 +81,15 @@ nor report calculations may depend on Capacitor.
 
 ## Intended modules and ownership
 
-The project retains the existing `features` naming while implementation evidence
-is still too small to justify a migration to the playbook's `domains` default.
+Domain-owned modules live under `src/domains`, matching the playbook default and
+the repository structure established before product implementation.
 
 ```text
 src/
   app/                 composition, providers, and router
     providers/
-  pages/               route-level feature composition
-  features/
+  pages/               route-level domain composition
+  domains/
     calendar/
     work-entry/
     reports/
@@ -103,14 +108,14 @@ src/
 The intended dependency direction is:
 
 ```text
-app -> pages -> features -> shared
+app -> pages -> domains -> shared
 ```
 
-- `shared` does not import features or pages.
-- Features do not import pages or application-composition modules.
-- Cross-feature imports use the target feature's `index.ts` public API.
-- Pages compose feature APIs and contain no business calculations.
-- Feature-specific code does not move into `shared` merely to bypass a boundary.
+- `shared` does not import domains or pages.
+- Domains do not import pages or application-composition modules.
+- Cross-domain imports use the target domain's `index.ts` public API.
+- Pages compose domain APIs and contain no business calculations.
+- Domain-specific code does not move into `shared` merely to bypass a boundary.
 - Only the persistence adapter calls raw IndexedDB.
 
 Directories should be added as behavior is implemented, not pre-created for
@@ -150,7 +155,7 @@ and error normalization.
 The current intended flow is:
 
 ```text
-UI event -> feature command -> runtime/domain validation
+UI event -> domain command -> runtime/domain validation
          -> repository transaction -> local state update
          -> derived selector -> UI
 ```
@@ -188,14 +193,14 @@ validation before values become domain data.
 
 ## Reports and platform boundaries
 
-The reports feature will produce simplified and extended monthly view models.
+The reports domain will produce simplified and extended monthly view models.
 Those same models feed the screen, PDF, and CSV renderers so totals cannot drift.
 Mixed currencies remain separate rather than being converted without a rate
 source.
 
 Browser builds download generated files. Capacitor builds will write temporary
 files and open the native share sheet. Platform behavior stays behind export and
-share adapters; feature/domain code depends only on their contracts.
+share adapters; domain code depends only on their contracts.
 
 ## Backup and restore target
 
@@ -218,13 +223,16 @@ unchanged.
 
 V1 supports Spanish and English and `light`, `dark`, and `system` themes. MUI
 owns theme tokens, breakpoints, defaults, and accessible contrast. The calendar
-feature wraps and styles `react-datepicker` so the external widget does not leak
+domain wraps and styles `react-datepicker` so the external widget does not leak
 throughout the app.
 
-All visible strings, validation messages, report labels, and accessibility names
-use translation keys once localization is implemented. Touch targets, keyboard
-operation, visible focus, dialog focus, error announcements, and date-picker
-behavior are acceptance concerns rather than optional polish.
+Domain-visible strings use colocated `es.json` and `en.json` resources through
+`useTranslation`. Application composition registers those namespaces. The
+initial language follows the first supported device preference and falls back to
+Spanish; a persisted user override and language selector remain future work.
+Touch targets, keyboard operation, visible focus, dialog focus, error
+announcements, and date-picker behavior are acceptance concerns rather than
+optional polish.
 
 ## Approved UI foundation
 
@@ -233,12 +241,18 @@ The approved visual direction is `Precisión serena`, documented in
 accessibility constraints were defined, so MUI remains the chosen UI library
 rather than an unvalidated bootstrap default.
 
-The initial UI foundation will be deliberately small: a project theme owns
+The initial UI foundation is deliberately small: a project theme owns
 repeated color, typography, spacing, focus, and interaction-state tokens;
 presentational components use MUI directly unless a wrapper adds real product
 semantics. The daily screen uses a neutral base, graphite text, teal as its only
 functional accent, a large primary action, and a complete circular status halo
 that must never imply progress toward a target duration.
+
+The implemented presentation boundary currently contains the active-workday
+halo and finish-action button. Each component owns a colocated test and styles
+file, consumes domain translation keys, and exposes only the minimum
+presentational props. They are not yet composed into a route or connected to
+domain/application state.
 
 The MVP is mobile-first and must remain usable from 320 px. Its composition
 should be able to center or reflow on wider viewports without implementing a
@@ -251,18 +265,18 @@ simulate the later shell.
 
 ## External boundaries
 
-| Boundary                   | Current state     | Intended contract and validation                                                                    |
-| -------------------------- | ----------------- | --------------------------------------------------------------------------------------------------- |
-| IndexedDB                  | Not implemented   | Typed repository/adapter; Zod validation for stored and migrated data; await transaction completion |
-| JSON import/export         | Not implemented   | Versioned envelope; validate complete import before confirmed atomic replacement                    |
-| CSV/PDF export             | Not implemented   | Render the shared report view model; keep browser/native delivery separate                          |
-| Capacitor filesystem/share | Core package only | Platform adapter; domain and feature code remain platform-neutral                                   |
-| Device locale/theme        | Not implemented   | Read at presentation/bootstrap boundary; persisted user choice takes precedence                     |
+| Boundary                   | Current state                 | Intended contract and validation                                                                    |
+| -------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------- |
+| IndexedDB                  | Not implemented               | Typed repository/adapter; Zod validation for stored and migrated data; await transaction completion |
+| JSON import/export         | Not implemented               | Versioned envelope; validate complete import before confirmed atomic replacement                    |
+| CSV/PDF export             | Not implemented               | Render the shared report view model; keep browser/native delivery separate                          |
+| Capacitor filesystem/share | Core package only             | Platform adapter; domain code remains platform-neutral                                              |
+| Device locale/theme        | Locale detection; light theme | First supported device language with Spanish fallback; persisted user choice will take precedence   |
 
 Planned but currently uninstalled capabilities include Capacitor CLI/Android and
-file-sharing plugins, localization libraries, PDF/CSV generation, React DOM test
-utilities, and Playwright. New libraries require a concrete need, compatibility
-review, and an architecture update.
+file-sharing plugins, PDF/CSV generation, IndexedDB test support, and Playwright.
+New libraries require a concrete need, compatibility review, and an architecture
+update.
 
 ## Security and privacy
 
@@ -284,13 +298,12 @@ artifact generation, and rollback/release strategy.
 
 ## Temporary decisions and review triggers
 
-| Decision                                                | Why now                                                                        | Revisit when                                                                      |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| Keep `src/features` rather than rename to `src/domains` | Avoid aesthetic restructuring before domain ownership exists                   | Multiple implemented modules expose real ownership or cross-feature dependencies  |
-| Use raw IndexedDB behind an adapter                     | Deliberate learning experiment with no current wrapper need                    | One migration or atomic restore has been implemented and tested                   |
-| Hydrate offline records into local React state          | Simple fit for a no-backend application                                        | Data volume, rendering behavior, or synchronization needs show a concrete problem |
-| Leave `BrowserRouter` in the scaffold                   | Native packaging is not implemented in this adoption                           | Before creating the Android project                                               |
-| Retain MUI after visual exploration                     | The approved restrained tool UI can be expressed with its theme and primitives | Repeated friction with the approved direction or accessibility requirements       |
+| Decision                                       | Why now                                                                        | Revisit when                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Use raw IndexedDB behind an adapter            | Deliberate learning experiment with no current wrapper need                    | One migration or atomic restore has been implemented and tested                   |
+| Hydrate offline records into local React state | Simple fit for a no-backend application                                        | Data volume, rendering behavior, or synchronization needs show a concrete problem |
+| Leave `BrowserRouter` in the scaffold          | Native packaging is not implemented in this adoption                           | Before creating the Android project                                               |
+| Retain MUI after visual exploration            | The approved restrained tool UI can be expressed with its theme and primitives | Repeated friction with the approved direction or accessibility requirements       |
 
 Additional tooling deviations are recorded in
 [`engineering-profile.md`](engineering-profile.md).

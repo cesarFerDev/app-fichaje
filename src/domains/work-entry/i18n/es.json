@@ -13,11 +13,13 @@
   "workday": {
     "actions": {
       "finish": "Finalizar jornada",
+      "finishing": "Guardando jornada",
       "start": "Iniciar jornada"
     },
     "feedback": {
       "entrySaved": "Entrada guardada localmente"
     },
+    "startTime": "Entrada · {{time}}",
     "status": {
       "active": "Jornada en curso",
       "completed": "Jornada finalizada",

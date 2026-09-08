@@ -6,6 +6,11 @@
 
 **Playbook version:** 0.3.0
 
+The MUI theme, active-workday halo, and finish-action button now implement the
+first reusable pieces of this direction. They are not connected to a product
+screen yet; final visual approval remains pending until the real flow is
+composed.
+
 ## Product intent
 
 App Fichaje must feel minimal, elegant, calm, and immediately understandable.

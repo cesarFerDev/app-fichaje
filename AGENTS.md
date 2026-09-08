@@ -5,7 +5,9 @@
 App Fichaje is an offline-first, mobile-focused work-time tracker for one person.
 It is currently a learning project with an approved first MVP slice and visual
 direction: the toolchain and minimal React shell exist, while product behavior
-and persistence have not yet been implemented.
+and persistence have not yet been implemented. The approved UI foundation now
+includes providers, domain-owned translations, and initial presentational
+components.
 
 ## Canonical context
 
@@ -47,6 +49,8 @@ pnpm dev
 pnpm typecheck
 pnpm lint
 pnpm format:check
+pnpm i18n:check
+pnpm i18n:format
 pnpm test
 pnpm test:watch
 pnpm build
@@ -61,12 +65,12 @@ the complete applicable set before handoff; never claim an unrun check passed.
 
 - `src/app`: application composition, providers, and routing.
 - `src/pages`: route-level composition without business calculations.
-- `src/features`: vertical product behavior and public feature APIs.
+- `src/domains`: product behavior, domain-owned UI, and public domain APIs.
 - `src/shared`: reusable, domain-neutral code.
 - `docs`: versioned product, architecture, engineering, and learning context.
 
-Keep the dependency direction `app -> pages -> features -> shared`. Cross-feature
-imports use feature entry points. React components do not call IndexedDB or
+Keep the dependency direction `app -> pages -> domains -> shared`. Cross-domain
+imports use domain entry points. React components do not call IndexedDB or
 Capacitor directly. Raw IndexedDB access belongs only in the persistence adapter.
 
 ## Local rules and deviations
@@ -79,8 +83,15 @@ cross-cutting dependencies change.
 
 Follow `docs/code-style.md`: keep TypeScript strict, runtime-validate untrusted
 boundaries with Zod, keep domain calculations pure, localize user-visible text,
-preserve accessibility, and keep feature public APIs small. Backend validation
+preserve accessibility, and keep domain public APIs small. Backend validation
 and authorization would remain authoritative if a backend is introduced.
+
+Domain React components use one folder per component with colocated component,
+test, and meaningful `styles.ts`. They obtain owned copy through
+`useTranslation`; each domain owns matching `es.json` and `en.json` resources.
+Run the i18n scripts after changing translations. Because
+`erasableSyntaxOnly` is active, use `as const` plus a derived union for named
+closed domain/application values instead of TypeScript enums.
 
 ## Learning contract
 
