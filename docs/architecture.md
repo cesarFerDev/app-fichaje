@@ -298,12 +298,13 @@ artifact generation, and rollback/release strategy.
 
 ## Temporary decisions and review triggers
 
-| Decision                                       | Why now                                                                        | Revisit when                                                                      |
-| ---------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| Use raw IndexedDB behind an adapter            | Deliberate learning experiment with no current wrapper need                    | One migration or atomic restore has been implemented and tested                   |
-| Hydrate offline records into local React state | Simple fit for a no-backend application                                        | Data volume, rendering behavior, or synchronization needs show a concrete problem |
-| Leave `BrowserRouter` in the scaffold          | Native packaging is not implemented in this adoption                           | Before creating the Android project                                               |
-| Retain MUI after visual exploration            | The approved restrained tool UI can be expressed with its theme and primitives | Repeated friction with the approved direction or accessibility requirements       |
+| Decision                                       | Why now                                                                        | Revisit when                                                                                                                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Use raw IndexedDB behind an adapter            | Deliberate learning experiment with no current wrapper need                    | One migration or atomic restore has been implemented and tested                                                                                                             |
+| Hydrate offline records into local React state | Simple fit for a no-backend application                                        | Data volume, rendering behavior, or synchronization needs show a concrete problem                                                                                           |
+| Leave `BrowserRouter` in the scaffold          | Native packaging is not implemented in this adoption                           | Before creating the Android project                                                                                                                                         |
+| Retain MUI after visual exploration            | The approved restrained tool UI can be expressed with its theme and primitives | Repeated friction with the approved direction or accessibility requirements                                                                                                 |
+| Keep `EUR/h` in the initial translation copy   | This slice supports only EUR and has no selectable-currency UI or catalog      | When another currency enters scope, interpolate the selected value and place its catalog according to the concrete consumers rather than defaulting prematurely to `shared` |
 
 Additional tooling deviations are recorded in
 [`engineering-profile.md`](engineering-profile.md).
