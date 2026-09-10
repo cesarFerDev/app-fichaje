@@ -1,5 +1,5 @@
 import type { Settings } from "../../settings";
-import type { ActiveWorkday, Workday } from "../types";
+import type { ActiveWorkday, DomainResult, Workday } from "../types";
 import { createLocalDateKey } from "./createLocalDateKey";
 
 type StartWorkdayParams = {
@@ -9,10 +9,6 @@ type StartWorkdayParams = {
   existingWorkdays: readonly Workday[];
 };
 
-type StartWorkdayResult =
-  | { success: true; workday: ActiveWorkday }
-  | { success: false; reason: StartWorkdayFailureReason };
-
 export const StartWorkdayFailureReasons = {
   ActiveWorkdayExists: "activeWorkdayExists",
   TodayWorkdayExists: "todayWorkdayExists",
@@ -20,6 +16,13 @@ export const StartWorkdayFailureReasons = {
 
 type StartWorkdayFailureReason =
   (typeof StartWorkdayFailureReasons)[keyof typeof StartWorkdayFailureReasons];
+
+type StartWorkdaySuccessPayload = { workday: ActiveWorkday };
+
+type StartWorkdayResult = DomainResult<
+  StartWorkdaySuccessPayload,
+  StartWorkdayFailureReason
+>;
 
 export function startWorkday({
   id,

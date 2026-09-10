@@ -17,3 +17,7 @@ export type CompletedWorkday = WorkdayBase & {
 };
 
 export type Workday = ActiveWorkday | CompletedWorkday;
+
+export type DomainResult<TSuccessPayload extends object, TFailureReason> =
+  | ({ success: true } & TSuccessPayload)
+  | { success: false; reason: TFailureReason };
