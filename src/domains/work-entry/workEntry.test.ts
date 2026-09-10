@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import { CurrencyCodes } from "../../shared/types/currency";
 import { createLocalDateKey } from "./utils/createLocalDateKey";
+import { startWorkday, StartWorkdayFailureReasons } from "./utils/startWorkday";
 
 /*
  * Phase 1 learning path
@@ -17,16 +19,6 @@ describe("work-entry domain", () => {
   describe("trusted settings", () => {
     it.todo(
       "represents a confirmed hourly rate as positive integer minor units and EUR",
-    );
-
-    it.todo("converts the suggested 9,00 EUR draft into 900 minor units");
-
-    it.todo(
-      "converts another valid draft without losing one or two decimal places",
-    );
-
-    it.todo(
-      "rejects an empty, zero, negative, textual, non-finite, or over-precise rate draft",
     );
   });
 
@@ -56,13 +48,84 @@ describe("work-entry domain", () => {
   });
 
   describe("starting a workday", () => {
-    it.todo(
-      "creates one active workday with a stable ID, local date key, ISO start instant, and rate snapshot",
-    );
+    const settings = {
+      defaultHourlyRateMinorUnits: 950,
+      defaultCurrency: CurrencyCodes.EUR,
+    };
+    const id = "new-workday-id";
+    it("creates one active workday with a stable ID, local date key, ISO start instant, and rate snapshot", () => {
+      const startInstant = new Date(2026, 0, 1, 12, 0, 0);
 
-    it.todo("rejects starting while any earlier workday is still active");
+      const expectedWorkday = {
+        id,
+        dateKey: "2026-01-01",
+        startedAt: startInstant.toISOString(),
+        endedAt: null,
+        hourlyRateMinorUnits: settings.defaultHourlyRateMinorUnits,
+        currency: settings.defaultCurrency,
+      };
+      expect(
+        startWorkday({
+          id,
+          startInstant,
+          settings,
+          existingWorkdays: [],
+        }),
+      ).toEqual({
+        success: true,
+        workday: expectedWorkday,
+      });
+    });
 
-    it.todo("rejects starting when today's workday is already completed");
+    it("rejects starting while any earlier workday is still active", () => {
+      const candidateStartInstant = new Date(2026, 0, 2, 12, 0, 0);
+      const existingStartInstant = new Date(2026, 0, 1, 12, 0, 0);
+      const existingWorkday = {
+        id: "existing-workday-id",
+        dateKey: "2026-01-01",
+        startedAt: existingStartInstant.toISOString(),
+        endedAt: null,
+        hourlyRateMinorUnits: settings.defaultHourlyRateMinorUnits,
+        currency: settings.defaultCurrency,
+      };
+      expect(
+        startWorkday({
+          id,
+          startInstant: candidateStartInstant,
+          settings,
+          existingWorkdays: [existingWorkday],
+        }),
+      ).toEqual({
+        success: false,
+        reason: StartWorkdayFailureReasons.ActiveWorkdayExists,
+      });
+    });
+
+    it("rejects starting when today's workday is already completed", () => {
+      const existingStartInstant = new Date(2026, 0, 1, 12, 0, 0);
+      const existingEndInstant = new Date(2026, 0, 1, 20, 0, 0);
+      const candidateStartInstant = new Date(2026, 0, 1, 21, 0, 0);
+
+      const completedWorkday = {
+        id: "today-ended-workday-id",
+        dateKey: "2026-01-01",
+        startedAt: existingStartInstant.toISOString(),
+        endedAt: existingEndInstant.toISOString(),
+        hourlyRateMinorUnits: settings.defaultHourlyRateMinorUnits,
+        currency: settings.defaultCurrency,
+      };
+      expect(
+        startWorkday({
+          id,
+          startInstant: candidateStartInstant,
+          settings,
+          existingWorkdays: [completedWorkday],
+        }),
+      ).toEqual({
+        success: false,
+        reason: StartWorkdayFailureReasons.TodayWorkdayExists,
+      });
+    });
   });
 
   describe("finishing a workday", () => {

@@ -4,7 +4,7 @@ export type WorkdayBase = {
   id: string;
   dateKey: string;
   startedAt: string;
-  hourlyRateCents: number;
+  hourlyRateMinorUnits: number;
   currency: CurrencyCode;
 };
 
