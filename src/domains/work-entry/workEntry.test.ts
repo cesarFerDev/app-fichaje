@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { workdaySchema, workdaysSchema } from ".";
 import { CurrencyCodes } from "../../shared/types/currency";
 import type { Workday } from "./types";
 import {
@@ -223,6 +224,207 @@ describe("work-entry domain", () => {
         success: false,
         reason:
           CalculateWorkdayDurationFailureReasons.CurrentInstantIsPreviousToWorkdayStarted,
+      });
+    });
+  });
+  describe("persisted workdays", () => {
+    const workday: Workday = {
+      id: "workday-id",
+      dateKey: "2026-01-01",
+      startedAt: "2026-01-01T08:30:00.000Z",
+      endedAt: "2026-01-01T17:30:00.000Z",
+      hourlyRateMinorUnits: 950,
+      currency: CurrencyCodes.EUR,
+    };
+    describe("persisted single workday", () => {
+      it.each([
+        { description: "active", input: { ...workday, endedAt: null } },
+        { description: "completed", input: { ...workday } },
+      ])("accepts a valid $description workday", ({ input }) => {
+        const result = workdaySchema.safeParse(input);
+
+        expect(result).toEqual({
+          success: true,
+          data: input,
+        });
+      });
+      it.each([
+        { description: "null", input: null },
+        { description: "non object data", input: [] },
+        {
+          description: "empty id",
+          input: {
+            id: "",
+            dateKey: "2026-01-01",
+            startedAt: "2026-01-01T08:30:00.000Z",
+            endedAt: "2026-01-01T17:30:00.000Z",
+            hourlyRateMinorUnits: 950,
+            currency: CurrencyCodes.EUR,
+          },
+        },
+        {
+          description: "missing id key",
+          input: {
+            dateKey: "2026-01-01",
+            startedAt: "2026-01-01T08:30:00.000Z",
+            endedAt: "2026-01-01T17:30:00.000Z",
+            hourlyRateMinorUnits: 950,
+            currency: CurrencyCodes.EUR,
+          },
+        },
+        {
+          description: "missing required key",
+          input: {
+            id: "workday-id",
+            dateKey: "2026-01-01",
+            startedAt: "2026-01-01T08:30:00.000Z",
+            endedAt: "2026-01-01T17:30:00.000Z",
+            hourlyRateMinorUnits: 950,
+          },
+        },
+        {
+          description: "additional keys",
+          input: { ...workday, additional: "invalid key" },
+        },
+        {
+          description: "invalid format for dateKey",
+          input: { ...workday, dateKey: "01-01-2026" },
+        },
+        {
+          description: "impossible date for dateKey",
+          input: { ...workday, dateKey: "2026-01-32" },
+        },
+        {
+          description: "invalid format for startedAt",
+          input: { ...workday, startedAt: "2026-01-01" },
+        },
+        {
+          description: "invalid format for endedAt",
+          input: { ...workday, endedAt: "2026-01-01" },
+        },
+        {
+          description: "endedAt equals startedAt",
+          input: { ...workday, endedAt: "2026-01-01T08:30:00.000Z" },
+        },
+        {
+          description: "endedAt previous to startedAt",
+          input: { ...workday, endedAt: "2026-01-01T07:30:00.000Z" },
+        },
+        {
+          description: "invalid rate type",
+          input: { ...workday, hourlyRateMinorUnits: "9.50" },
+        },
+        {
+          description: "rate 0",
+          input: { ...workday, hourlyRateMinorUnits: 0 },
+        },
+        {
+          description: "rate with decimals",
+          input: { ...workday, hourlyRateMinorUnits: 9.5 },
+        },
+        {
+          description: "rate superior to max safe integer value",
+          input: {
+            ...workday,
+            hourlyRateMinorUnits: Number.MAX_SAFE_INTEGER + 1,
+          },
+        },
+        {
+          description: "invalid currency",
+          input: { ...workday, currency: "BTC" },
+        },
+      ])("rejects $description", ({ input }) => {
+        const result = workdaySchema.safeParse(input);
+
+        expect(result.success).toBe(false);
+      });
+    });
+
+    describe("persisted workday collection", () => {
+      const secondCompletedWorkday: Workday = {
+        ...workday,
+        id: "second-workday-id",
+        dateKey: "2026-01-02",
+        startedAt: "2026-01-02T08:30:00.000Z",
+        endedAt: "2026-01-02T17:30:00.000Z",
+      };
+      const activeWorkday: Workday = {
+        ...workday,
+        id: "active-workday-id",
+        dateKey: "2026-01-03",
+        startedAt: "2026-01-03T08:30:00.000Z",
+        endedAt: null,
+      };
+
+      it("accepts an empty collection", () => {
+        const result = workdaysSchema.safeParse([]);
+
+        expect(result).toEqual({
+          success: true,
+          data: [],
+        });
+      });
+
+      it("accepts unique completed workdays and at most one active workday", () => {
+        const validCollection = [
+          workday,
+          secondCompletedWorkday,
+          activeWorkday,
+        ];
+
+        const result = workdaysSchema.safeParse(validCollection);
+
+        expect(result).toEqual({
+          success: true,
+          data: validCollection,
+        });
+      });
+
+      it.each([
+        {
+          description: "a root value that is not an array",
+          input: { workday },
+        },
+        {
+          description: "an individually invalid workday",
+          input: [{ ...workday, id: "" }],
+        },
+        {
+          description: "duplicate IDs across different dates",
+          input: [
+            workday,
+            {
+              ...secondCompletedWorkday,
+              id: workday.id,
+            },
+          ],
+        },
+        {
+          description: "duplicate date keys across different IDs",
+          input: [
+            workday,
+            {
+              ...secondCompletedWorkday,
+              dateKey: workday.dateKey,
+            },
+          ],
+        },
+        {
+          description: "multiple active workdays across different dates",
+          input: [
+            activeWorkday,
+            {
+              ...activeWorkday,
+              id: "another-active-workday-id",
+              dateKey: "2026-01-04",
+              startedAt: "2026-01-04T08:30:00.000Z",
+            },
+          ],
+        },
+      ])("rejects $description", ({ input }) => {
+        const result = workdaysSchema.safeParse(input);
+
+        expect(result.success).toBe(false);
       });
     });
   });
