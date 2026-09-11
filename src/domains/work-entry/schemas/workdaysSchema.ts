@@ -4,19 +4,19 @@ import { workdaySchema } from "./workdaySchema";
 export const workdaysSchema = z
   .array(workdaySchema)
   .superRefine((workdays, context) => {
-    const seenIds = new Set<string>();
+    const seenUuids = new Set<string>();
     const seenDateKeys = new Set<string>();
     let hasActiveWorkday = false;
 
     workdays.forEach((workday, index) => {
-      if (seenIds.has(workday.id)) {
+      if (seenUuids.has(workday.uuid)) {
         context.addIssue({
           code: "custom",
-          message: "Duplicate workday ID",
-          path: [index, "id"],
+          message: "Duplicate workday UUID",
+          path: [index, "uuid"],
         });
       } else {
-        seenIds.add(workday.id);
+        seenUuids.add(workday.uuid);
       }
       if (seenDateKeys.has(workday.dateKey)) {
         context.addIssue({

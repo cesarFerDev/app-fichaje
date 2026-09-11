@@ -3,7 +3,7 @@ import type { ActiveWorkday, DomainResult, Workday } from "../types";
 import { createLocalDateKey } from "./createLocalDateKey";
 
 type StartWorkdayParams = {
-  id: string;
+  uuid: string;
   startInstant: Date;
   settings: Settings;
   existingWorkdays: readonly Workday[];
@@ -25,7 +25,7 @@ type StartWorkdayResult = DomainResult<
 >;
 
 export function startWorkday({
-  id,
+  uuid,
   startInstant,
   settings,
   existingWorkdays,
@@ -52,7 +52,7 @@ export function startWorkday({
   return {
     success: true,
     workday: {
-      id,
+      uuid,
       dateKey,
       startedAt: startInstant.toISOString(),
       endedAt: null,

@@ -51,7 +51,7 @@ describe("IndexedDB schema", () => {
     expect(settingsStore.autoIncrement).toBe(false);
   });
 
-  it.skip("configures workdays by ID with a unique local-date index", async () => {
+  it.skip("configures workdays by UUID with a unique local-date index", async () => {
     database = await openDatabase(databaseName);
     const transaction = database.transaction(
       ObjectStoreNames.Workdays,
@@ -60,7 +60,7 @@ describe("IndexedDB schema", () => {
     const workdaysStore = transaction.objectStore(ObjectStoreNames.Workdays);
     const dateKeyIndex = workdaysStore.index(WorkdayIndexNames.DateKey);
 
-    expect(workdaysStore.keyPath).toBe("id");
+    expect(workdaysStore.keyPath).toBe("uuid");
     expect(workdaysStore.autoIncrement).toBe(false);
     expect(dateKeyIndex.keyPath).toBe("dateKey");
     expect(dateKeyIndex.unique).toBe(true);

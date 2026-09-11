@@ -56,12 +56,12 @@ describe("work-entry domain", () => {
       defaultHourlyRateMinorUnits: 950,
       defaultCurrency: CurrencyCodes.EUR,
     };
-    const id = "new-workday-id";
+    const uuid = "00000000-0000-4000-8000-000000000001";
     it("creates one active workday with a stable ID, local date key, ISO start instant, and rate snapshot", () => {
       const startInstant = new Date(2026, 0, 1, 12, 0, 0);
 
       const expectedWorkday: Workday = {
-        id,
+        uuid,
         dateKey: "2026-01-01",
         startedAt: startInstant.toISOString(),
         endedAt: null,
@@ -70,7 +70,7 @@ describe("work-entry domain", () => {
       };
       expect(
         startWorkday({
-          id,
+          uuid,
           startInstant,
           settings,
           existingWorkdays: [],
@@ -85,7 +85,7 @@ describe("work-entry domain", () => {
       const candidateStartInstant = new Date(2026, 0, 2, 12, 0, 0);
       const existingStartInstant = new Date(2026, 0, 1, 12, 0, 0);
       const existingWorkday: Workday = {
-        id: "existing-workday-id",
+        uuid: "00000000-0000-4000-8000-000000000002",
         dateKey: "2026-01-01",
         startedAt: existingStartInstant.toISOString(),
         endedAt: null,
@@ -94,7 +94,7 @@ describe("work-entry domain", () => {
       };
       expect(
         startWorkday({
-          id,
+          uuid,
           startInstant: candidateStartInstant,
           settings,
           existingWorkdays: [existingWorkday],
@@ -111,7 +111,7 @@ describe("work-entry domain", () => {
       const candidateStartInstant = new Date(2026, 0, 1, 21, 0, 0);
 
       const completedWorkday: Workday = {
-        id: "today-ended-workday-id",
+        uuid: "00000000-0000-4000-8000-000000000003",
         dateKey: "2026-01-01",
         startedAt: existingStartInstant.toISOString(),
         endedAt: existingEndInstant.toISOString(),
@@ -120,7 +120,7 @@ describe("work-entry domain", () => {
       };
       expect(
         startWorkday({
-          id,
+          uuid,
           startInstant: candidateStartInstant,
           settings,
           existingWorkdays: [completedWorkday],
@@ -134,7 +134,7 @@ describe("work-entry domain", () => {
 
   describe("finishing a workday", () => {
     const workday: Workday = {
-      id: "active-workday-id",
+      uuid: "00000000-0000-4000-8000-000000000004",
       dateKey: "2026-01-01",
       startedAt: "2026-01-01T08:30:00.000Z",
       endedAt: null,
@@ -183,7 +183,7 @@ describe("work-entry domain", () => {
 
   describe("derived duration and recovery", () => {
     const workday: Workday = {
-      id: "active-workday-id",
+      uuid: "00000000-0000-4000-8000-000000000004",
       dateKey: "2026-01-01",
       startedAt: "2026-01-01T08:30:00.000Z",
       endedAt: null,
@@ -229,7 +229,7 @@ describe("work-entry domain", () => {
   });
   describe("persisted workdays", () => {
     const workday: Workday = {
-      id: "workday-id",
+      uuid: "00000000-0000-4000-8000-000000000005",
       dateKey: "2026-01-01",
       startedAt: "2026-01-01T08:30:00.000Z",
       endedAt: "2026-01-01T17:30:00.000Z",
@@ -252,9 +252,9 @@ describe("work-entry domain", () => {
         { description: "null", input: null },
         { description: "non object data", input: [] },
         {
-          description: "empty id",
+          description: "empty UUID",
           input: {
-            id: "",
+            uuid: "",
             dateKey: "2026-01-01",
             startedAt: "2026-01-01T08:30:00.000Z",
             endedAt: "2026-01-01T17:30:00.000Z",
@@ -263,7 +263,7 @@ describe("work-entry domain", () => {
           },
         },
         {
-          description: "missing id key",
+          description: "missing UUID key",
           input: {
             dateKey: "2026-01-01",
             startedAt: "2026-01-01T08:30:00.000Z",
@@ -275,12 +275,16 @@ describe("work-entry domain", () => {
         {
           description: "missing required key",
           input: {
-            id: "workday-id",
+            uuid: "00000000-0000-4000-8000-000000000005",
             dateKey: "2026-01-01",
             startedAt: "2026-01-01T08:30:00.000Z",
             endedAt: "2026-01-01T17:30:00.000Z",
             hourlyRateMinorUnits: 950,
           },
+        },
+        {
+          description: "a non-UUID identifier",
+          input: { ...workday, uuid: "workday-id" },
         },
         {
           description: "additional keys",
@@ -343,14 +347,14 @@ describe("work-entry domain", () => {
     describe("persisted workday collection", () => {
       const secondCompletedWorkday: Workday = {
         ...workday,
-        id: "second-workday-id",
+        uuid: "00000000-0000-4000-8000-000000000006",
         dateKey: "2026-01-02",
         startedAt: "2026-01-02T08:30:00.000Z",
         endedAt: "2026-01-02T17:30:00.000Z",
       };
       const activeWorkday: Workday = {
         ...workday,
-        id: "active-workday-id",
+        uuid: "00000000-0000-4000-8000-000000000007",
         dateKey: "2026-01-03",
         startedAt: "2026-01-03T08:30:00.000Z",
         endedAt: null,
@@ -387,15 +391,15 @@ describe("work-entry domain", () => {
         },
         {
           description: "an individually invalid workday",
-          input: [{ ...workday, id: "" }],
+          input: [{ ...workday, uuid: "" }],
         },
         {
-          description: "duplicate IDs across different dates",
+          description: "duplicate UUIDs across different dates",
           input: [
             workday,
             {
               ...secondCompletedWorkday,
-              id: workday.id,
+              uuid: workday.uuid,
             },
           ],
         },
@@ -415,7 +419,7 @@ describe("work-entry domain", () => {
             activeWorkday,
             {
               ...activeWorkday,
-              id: "another-active-workday-id",
+              uuid: "00000000-0000-4000-8000-000000000008",
               dateKey: "2026-01-04",
               startedAt: "2026-01-04T08:30:00.000Z",
             },

@@ -22,8 +22,9 @@ Each local calendar date is in exactly one of three states:
 - one categorized absence.
 
 A date cannot contain both work and absence, and v1 does not support split
-shifts. Stable generated IDs identify records and break intervals; the date is a
-unique business key for a day record.
+shifts. UUIDs generated with the Web Crypto API identify records; break
+intervals will also use stable generated identifiers when introduced. The date
+is a unique business key for a day record.
 
 Dates are stored as `YYYY-MM-DD` local date keys. Event timestamps are stored as
 ISO-8601 instants. An overnight workday belongs entirely to the date on which it

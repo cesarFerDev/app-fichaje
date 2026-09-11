@@ -1,7 +1,7 @@
 import type { CurrencyCode } from "../../shared/types/currency";
 
 export type WorkdayBase = {
-  id: string;
+  uuid: string;
   dateKey: string;
   startedAt: string;
   hourlyRateMinorUnits: number;

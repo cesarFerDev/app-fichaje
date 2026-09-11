@@ -3,7 +3,7 @@ import { CurrencyCodes } from "../../../shared/types/currency";
 import type { Workday } from "../types";
 
 const workdayBaseShape = {
-  id: z.string().min(1),
+  uuid: z.uuid(),
   dateKey: z.iso.date(),
   startedAt: z.iso.datetime(),
   hourlyRateMinorUnits: z.number().int().positive(),
