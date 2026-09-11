@@ -27,9 +27,7 @@ describe("IndexedDB schema", () => {
     expect(createTestDatabaseName()).not.toBe(databaseName);
   });
 
-  // Enable these scenarios while implementing openDatabase. They remain skipped
-  // only so the standalone scaffolding commit keeps the existing suite green.
-  it.skip("opens a new database at version 1 with only the required stores", async () => {
+  it("opens a new database at version 1 with only the required stores", async () => {
     database = await openDatabase(databaseName);
 
     expect(database.version).toBe(DATABASE_VERSION);
@@ -39,7 +37,20 @@ describe("IndexedDB schema", () => {
     ]);
   });
 
-  it.skip("configures settings as a singleton value with an external key", async () => {
+  it("reopens an existing database at the same version without recreating its schema", async () => {
+    database = await openDatabase(databaseName);
+    database.close();
+
+    database = await openDatabase(databaseName);
+
+    expect(database.version).toBe(DATABASE_VERSION);
+    expect(Array.from(database.objectStoreNames)).toEqual([
+      ObjectStoreNames.Settings,
+      ObjectStoreNames.Workdays,
+    ]);
+  });
+
+  it("configures settings as a singleton value with an external key", async () => {
     database = await openDatabase(databaseName);
     const transaction = database.transaction(
       ObjectStoreNames.Settings,
@@ -51,7 +62,7 @@ describe("IndexedDB schema", () => {
     expect(settingsStore.autoIncrement).toBe(false);
   });
 
-  it.skip("configures workdays by UUID with a unique local-date index", async () => {
+  it("configures workdays by UUID with a unique local-date index", async () => {
     database = await openDatabase(databaseName);
     const transaction = database.transaction(
       ObjectStoreNames.Workdays,

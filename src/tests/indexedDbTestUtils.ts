@@ -17,3 +17,15 @@ export function deleteTestDatabase(databaseName: string): Promise<void> {
     });
   });
 }
+
+export function waitForTransaction(transaction: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    transaction.addEventListener("complete", () => resolve());
+    transaction.addEventListener("abort", () => {
+      reject(transaction.error ?? new Error("Test transaction was aborted"));
+    });
+    transaction.addEventListener("error", () => {
+      reject(transaction.error ?? new Error("Test transaction failed"));
+    });
+  });
+}
