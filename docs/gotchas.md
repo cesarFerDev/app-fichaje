@@ -40,3 +40,18 @@ completion, not only request success.
 **What to do:** Keep raw IndexedDB inside the adapter and resolve mutations only
 after the transaction completes.  
 **Relevant area:** persistence, live commands, and backup restore.
+
+## The React ESLint plugin has not declared ESLint 10 support
+
+**Symptom / trap:** `pnpm peers check` reports an unmet `eslint` peer after an
+otherwise successful install.
+
+**Reality:** The warning comes from `eslint-plugin-react@7.37.5`, whose declared
+peer range stops before the installed ESLint 10. The project lint command
+currently passes.
+
+**What to do:** Do not attribute this warning to i18next or Testing Library, and
+do not silence it by editing the lockfile. Reassess the plugin when a compatible
+release exists or lint behavior demonstrates a real failure.
+
+**Relevant area:** dependency installation and lint tooling.

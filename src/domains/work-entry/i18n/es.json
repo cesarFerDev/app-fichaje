@@ -1,0 +1,29 @@
+{
+  "onboarding": {
+    "description": "Confirma cuánto cobras por hora antes de iniciar tu primera jornada.",
+    "hourlyRate": {
+      "help": "Puedes cambiarla antes de continuar.",
+      "label": "Tarifa por hora",
+      "unit": "EUR/h"
+    },
+    "submit": "Confirmar tarifa",
+    "submitting": "Guardando tarifa",
+    "title": "Configura tu tarifa"
+  },
+  "workday": {
+    "actions": {
+      "finish": "Finalizar jornada",
+      "finishing": "Guardando jornada",
+      "start": "Iniciar jornada"
+    },
+    "feedback": {
+      "entrySaved": "Entrada guardada localmente"
+    },
+    "startTime": "Entrada · {{time}}",
+    "status": {
+      "active": "Jornada en curso",
+      "completed": "Jornada finalizada",
+      "empty": "Sin jornada iniciada"
+    }
+  }
+}

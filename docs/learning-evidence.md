@@ -27,3 +27,20 @@ Project-facing interface: `academic/learning-progress.md` in that repository.
 - Transfer signal: <positive / fragile / new exposure>
 - Academic candidate: <optional short follow-up proposal>
 ```
+
+## 2026-09-12 — Raw IndexedDB persistence boundary
+
+- Concept: Repository contracts, connection ownership, runtime validation, and
+  request success versus transaction commit.
+- Evidence: César independently chose one externally owned connection with
+  separate domain repository contracts, implemented the opening and repository
+  operations after orientation, and correctly explained that an aborted
+  transaction must reject without changing confirmed UI state even after a
+  successful request.
+- Help required: Focused IndexedDB mini-lessons, agent-authored test scaffolding,
+  and direct help with the event-based atomic read/validate/write sequence.
+- Transfer signal: Positive for ownership and persist-first reasoning; raw
+  IndexedDB event mechanics remain new exposure.
+- Academic candidate: Revisit transaction/commit reasoning later with a
+  promise-based or SQL persistence client to separate transferable concepts from
+  IndexedDB-specific syntax.

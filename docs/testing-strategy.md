@@ -8,25 +8,27 @@ then add broader coverage for critical user journeys and integration boundaries.
 
 ## Current automated baseline
 
-Vitest is installed, but the repository does not yet contain tests because no
-product behavior has been implemented. `pnpm test` is deterministic and
-temporarily uses `--passWithNoTests`; `pnpm test:run` remains a compatible alias,
-and `pnpm test:watch` starts interactive watch mode.
+Vitest, jsdom, React Testing Library, user-event, and jest-dom provide the current
+automated baseline. The suite covers device-language resolution, isolated
+Spanish/English provider rendering, the active status halo's non-progress
+semantics, and the finish action's available/pending behavior.
 
-This zero-test tolerance keeps the shared local/CI contract executable during
-foundation work. It is not permission to merge implemented behavior without
-appropriate tests and must be removed when the first meaningful suite is added.
+`pnpm test` is deterministic and requires tests to exist; `pnpm test:run` remains
+a compatible alias, and `pnpm test:watch` starts interactive watch mode.
 
 ## Planned test stack
 
 - Vitest is installed for pure unit and integration tests.
-- React Testing Library, user-event, jest-dom, and jsdom are planned for React
+- React Testing Library, user-event, jest-dom, and jsdom are installed for React
   behavior.
 - Playwright is planned for critical browser journeys.
 - Manual Android smoke testing is planned for Capacitor-specific v1 behavior.
 
-The supporting React and browser testing packages are not installed yet. Add
-them only when an agreed test requires them.
+The shared `src/tests/test-utils.tsx` render helper composes the real application
+providers and creates an isolated i18next instance for every render. Tests can
+select Spanish or English explicitly without mutating another test.
+`pnpm i18n:check` verifies translation key order and parity; component tests
+assert the localized values and accessible names that users actually encounter.
 
 ## Test organization
 
@@ -35,7 +37,8 @@ test areas for cross-module behavior:
 
 ```text
 src/
-  features/**/<module>.test.ts(x)
+  domains/**/<Component>/<Component>.test.tsx
+  domains/**/<module>.test.ts
   shared/**/<module>.test.ts
   tests/
     integration/

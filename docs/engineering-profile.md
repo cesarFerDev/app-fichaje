@@ -6,24 +6,23 @@ the global defaults. It is not a backlog.
 ## Playbook alignment
 
 - Canonical playbook: `cesarFerDev/software-engineering-playbook`
-- Last reviewed against version: `0.2.1`
-- Last review date: `2026-09-07`
+- Last reviewed against version: `0.3.0`
+- Last review date: `2026-09-08`
 - Aligned foundations: React, TypeScript strict mode, Vite, MUI, pnpm, Zod,
-  local-first simplicity, minimal dependencies, and no v1 backend.
+  local-first simplicity, minimal dependencies, no v1 backend, proportional
+  project lifecycle, and delegated visual implementation with César retaining
+  product/UX constraints and final approval.
 
 ## Defaults overridden
 
-| Global default                                  | Local choice                                | Rationale                                                                                                             | Status    |
-| ----------------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------- |
-| Domain-owned modules normally use `src/domains` | Retain the existing `src/features` boundary | Renaming an empty foundation would be aesthetic churn; ownership can be reassessed from real modules and dependencies | temporary |
+None currently.
 
 ## Temporary deviations
 
-| Deviation                                                                             | Why accepted                                                                                                      | Review trigger                                                         |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Deterministic test scripts use `--passWithNoTests`                                    | The project shell has no implemented behavior or meaningful suite yet, while CI still needs a stable test command | Remove it when the first meaningful suite is added                     |
-| `BrowserRouter` is active although `HashRouter` is planned for packaged static assets | Native packaging is not implemented and this adoption intentionally avoids production changes                     | Decide and test routing before adding the Capacitor Android project    |
-| `src/app/App.tsx` uses a default export                                               | It is isolated scaffold debt, not the project-wide convention                                                     | Convert when the application shell receives substantive implementation |
+| Deviation                                                                             | Why accepted                                                                                  | Review trigger                                                         |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `BrowserRouter` is active although `HashRouter` is planned for packaged static assets | Native packaging is not implemented and this adoption intentionally avoids production changes | Decide and test routing before adding the Capacitor Android project    |
+| `src/app/App.tsx` uses a default export                                               | It is isolated scaffold debt, not the project-wide convention                                 | Convert when the application shell receives substantive implementation |
 
 ## Active experiments
 
@@ -37,17 +36,38 @@ the global defaults. It is not a backlog.
 - React context for hydrated offline data does not conflict with the playbook's
   TanStack Query guidance: v1 has no server state and TanStack Query is not
   installed.
+- MUI was already installed before the playbook 0.3.0 visual-exploration
+  workflow, but the approved `Precisión serena` direction has now validated its
+  continued use. A small project theme customizes it without creating a
+  parallel design system.
+- Domain-owned React translations use colocated `es.json` and `en.json`
+  resources. `src/app/i18n` owns composition, device-language resolution, and
+  the Spanish fallback.
+- `erasableSyntaxOnly` prevents TypeScript enums. Named closed values belonging
+  to the domain or application therefore use an `as const` value with a derived
+  union type; this preserves the intent without changing the compiler policy.
+- The root `typecheck` command uses TypeScript build mode because the root
+  configuration references the application and Node configurations.
 - `eslint.config.js` is the canonical ESLint configuration. The redundant
   `eslint.config.ts` is retained unchanged in intent for this minimal adoption;
   removal is a separate cleanup decision.
-- The project-facing university interface
-  `academic/learning-progress.md` was absent from the available committed v0.2.1
-  university snapshot during this review. No competency state was inferred or
-  copied from deeper files.
+- The project-facing university interface `academic/learning-progress.md` was
+  available during the 0.3.0 review and informed the implementation ownership
+  split. No global competency state was changed or copied into this repository.
 
 ## Pending playbook-version review
 
 - None.
+
+## Pending global playbook proposals
+
+The initial scaffolding review identified candidate global conventions for
+domain-owned i18n resources, translation parity tooling, component folder/style
+organization, local `Props` naming, enum alternatives under
+`erasableSyntaxOnly`, provider-aware test rendering, and incremental scaffolding
+review. They are recorded in [`review.md`](review.md) but have not been applied to
+the canonical playbook. Global changes still require explicit approval and the
+`playbook-maintainer` workflow.
 
 Learning observations belong in [`learning-evidence.md`](learning-evidence.md);
 global competency and progression belong to `software-engineering-university`.

@@ -12,9 +12,11 @@ remain on the device unless the user explicitly exports them.
 
 ## Project status
 
-The repository is in its planning and foundation stage. The source tree and
-initial toolchain exist, but product features, persistence, automated tests, and
-the Android project have not been implemented yet.
+The first MVP vertical slice and its visual direction are approved for
+implementation. The source tree and initial toolchain exist, but product
+behavior, persistence, and the Android project have not been implemented yet.
+The current foundation includes theme and i18n providers, Spanish and English
+domain resources, and the first tested presentational components.
 
 Planned version 1 capabilities include:
 
@@ -37,13 +39,14 @@ Planned version 1 capabilities include:
 - react-datepicker and date-fns
 - React Hook Form and Zod
 - Capacitor Core 8
-- Vitest, ESLint, and Prettier
+- i18next and react-i18next
+- Vitest, React Testing Library, user-event, jsdom, ESLint, and Prettier
 
 Some planned capabilities still require dependencies, including Capacitor's CLI
-and Android/file-sharing packages, localization, report generation, React DOM
-testing utilities, and Playwright. Raw IndexedDB will be used intentionally
-without a wrapper so its API, transactions, and migrations can be learned and
-kept behind a repository boundary.
+and Android/file-sharing packages, report generation, IndexedDB test support,
+and Playwright. Raw IndexedDB will be used intentionally without a wrapper so
+its API, transactions, and migrations can be learned and kept behind a
+repository boundary.
 
 ## Local development
 
@@ -61,6 +64,8 @@ Available validation commands are:
 pnpm typecheck
 pnpm lint
 pnpm format:check
+pnpm i18n:check
+pnpm i18n:format
 pnpm test
 pnpm test:watch
 pnpm build
@@ -69,12 +74,12 @@ pnpm run check
 
 `pnpm run check` is the canonical fast quality gate and covers type checking,
 linting, formatting, and deterministic tests. The build remains a separate gate.
-Until the first meaningful suite is added, the deterministic test command
-temporarily accepts a repository with no tests.
+Translation parity and alphabetical key order are part of the formatting gate.
 
 ## Project documentation
 
 - [Documentation index](docs/README.md)
 - [Product scope](docs/product.md)
 - [Architecture](docs/architecture.md)
+- [Visual direction](docs/design.md)
 - [Engineering profile and playbook deviations](docs/engineering-profile.md)
