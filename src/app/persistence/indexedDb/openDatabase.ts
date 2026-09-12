@@ -1,4 +1,8 @@
 import {
+  normalizePersistenceError,
+  PersistenceOperations,
+} from "../PersistenceError";
+import {
   DATABASE_NAME,
   DATABASE_VERSION,
   ObjectStoreNames,
@@ -8,7 +12,7 @@ import {
 export function openDatabase(
   databaseName: string = DATABASE_NAME,
 ): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  return new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(databaseName, DATABASE_VERSION);
     request.addEventListener("upgradeneeded", () => {
       const database = request.result;
@@ -28,5 +32,7 @@ export function openDatabase(
     request.addEventListener("error", () => {
       reject(request.error ?? new Error("Failed to open IndexedDB"));
     });
+  }).catch((cause: unknown) => {
+    throw normalizePersistenceError(PersistenceOperations.Open, cause);
   });
 }

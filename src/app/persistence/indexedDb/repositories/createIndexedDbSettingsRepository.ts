@@ -3,13 +3,17 @@ import {
   type Settings,
   type SettingsRepository,
 } from "../../../../domains/settings";
+import {
+  normalizePersistenceError,
+  PersistenceOperations,
+} from "../../PersistenceError";
 import { ObjectStoreNames, SettingsKeys } from "../databaseSchema";
 
 export function createIndexedDbSettingsRepository(
   database: IDBDatabase,
 ): SettingsRepository {
   function getSettings(): Promise<Settings | null> {
-    return new Promise((resolve, reject) => {
+    return new Promise<Settings | null>((resolve, reject) => {
       let rawValue: unknown;
       const transaction = database.transaction(
         ObjectStoreNames.Settings,
@@ -44,11 +48,13 @@ export function createIndexedDbSettingsRepository(
       transaction.addEventListener("error", () => {
         reject(transaction.error ?? new Error("Settings transaction failed"));
       });
+    }).catch((cause: unknown) => {
+      throw normalizePersistenceError(PersistenceOperations.Read, cause);
     });
   }
 
   function saveSettings(newSettings: Settings): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(
         ObjectStoreNames.Settings,
         "readwrite",
@@ -71,6 +77,8 @@ export function createIndexedDbSettingsRepository(
       transaction.addEventListener("error", () => {
         reject(transaction.error ?? new Error("Settings transaction failed"));
       });
+    }).catch((cause: unknown) => {
+      throw normalizePersistenceError(PersistenceOperations.Write, cause);
     });
   }
 

@@ -5,13 +5,17 @@ import {
   type Workday,
   type WorkdayRepository,
 } from "../../../../domains/work-entry";
+import {
+  normalizePersistenceError,
+  PersistenceOperations,
+} from "../../PersistenceError";
 import { ObjectStoreNames } from "../databaseSchema";
 
 export function createIndexedDbWorkdayRepository(
   database: IDBDatabase,
 ): WorkdayRepository {
   function getWorkdays(): Promise<readonly Workday[]> {
-    return new Promise((resolve, reject) => {
+    return new Promise<readonly Workday[]>((resolve, reject) => {
       let rawValue: unknown;
       const transaction = database.transaction(
         ObjectStoreNames.Workdays,
@@ -42,11 +46,13 @@ export function createIndexedDbWorkdayRepository(
       transaction.addEventListener("error", () => {
         reject(transaction.error ?? new Error("Workdays transaction failed"));
       });
+    }).catch((cause: unknown) => {
+      throw normalizePersistenceError(PersistenceOperations.Read, cause);
     });
   }
 
   function addWorkday(newWorkday: ActiveWorkday): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(
         ObjectStoreNames.Workdays,
         "readwrite",
@@ -100,11 +106,13 @@ export function createIndexedDbWorkdayRepository(
           transaction.error ?? new Error("Workday addition transaction failed"),
         );
       });
+    }).catch((cause: unknown) => {
+      throw normalizePersistenceError(PersistenceOperations.Write, cause);
     });
   }
 
   function updateWorkday(updatedWorkday: CompletedWorkday): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(
         ObjectStoreNames.Workdays,
         "readwrite",
@@ -149,6 +157,8 @@ export function createIndexedDbWorkdayRepository(
           transaction.error ?? new Error("Workday update transaction failed"),
         );
       });
+    }).catch((cause: unknown) => {
+      throw normalizePersistenceError(PersistenceOperations.Write, cause);
     });
   }
 

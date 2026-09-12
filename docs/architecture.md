@@ -30,10 +30,14 @@ sections below.
   language, and falls back to Spanish.
 - `src/domains/work-entry` owns Spanish/English translations and the initial
   active-workday halo and finish-action presentation components.
-- Page, persistence, report, export, and native adapter modules do not exist yet.
-- No IndexedDB database or application state store has been implemented.
-- Vitest, jsdom, and React Testing Library exercise the current provider, i18n,
-  accessibility, and pending-interaction contracts.
+- Page, report, export, and native adapter modules do not exist yet.
+- `src/app/persistence` owns the raw IndexedDB v1 schema, connection lifecycle,
+  normalized persistence errors, and the concrete settings/workday repository
+  implementations. Stored reads are validated with the owning domain schemas.
+- No application state store or React persistence bootstrap has been implemented.
+- Vitest, jsdom, React Testing Library, and `fake-indexeddb` exercise the current
+  provider, i18n, accessibility, pending-interaction, domain, and persistence
+  contracts.
 - Capacitor Core is installed, but the CLI, Android project, and native plugins
   are not.
 
@@ -267,17 +271,17 @@ simulate the later shell.
 
 ## External boundaries
 
-| Boundary                   | Current state                 | Intended contract and validation                                                                    |
-| -------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| IndexedDB                  | Not implemented               | Typed repository/adapter; Zod validation for stored and migrated data; await transaction completion |
-| JSON import/export         | Not implemented               | Versioned envelope; validate complete import before confirmed atomic replacement                    |
-| CSV/PDF export             | Not implemented               | Render the shared report view model; keep browser/native delivery separate                          |
-| Capacitor filesystem/share | Core package only             | Platform adapter; domain code remains platform-neutral                                              |
-| Device locale/theme        | Locale detection; light theme | First supported device language with Spanish fallback; persisted user choice will take precedence   |
+| Boundary                   | Current state                 | Intended contract and validation                                                                  |
+| -------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| IndexedDB                  | Initial adapter implemented   | Typed repositories; Zod validation for stored data; writes await transaction completion           |
+| JSON import/export         | Not implemented               | Versioned envelope; validate complete import before confirmed atomic replacement                  |
+| CSV/PDF export             | Not implemented               | Render the shared report view model; keep browser/native delivery separate                        |
+| Capacitor filesystem/share | Core package only             | Platform adapter; domain code remains platform-neutral                                            |
+| Device locale/theme        | Locale detection; light theme | First supported device language with Spanish fallback; persisted user choice will take precedence |
 
 Planned but currently uninstalled capabilities include Capacitor CLI/Android and
-file-sharing plugins, PDF/CSV generation, IndexedDB test support, and Playwright.
-New libraries require a concrete need, compatibility review, and an architecture
+file-sharing plugins, PDF/CSV generation, and Playwright. New libraries require
+a concrete need, compatibility review, and an architecture
 update.
 
 ## Security and privacy

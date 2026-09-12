@@ -6,6 +6,10 @@ import {
   deleteTestDatabase,
   waitForTransaction,
 } from "../../../../tests/indexedDbTestUtils";
+import {
+  PersistenceError,
+  PersistenceOperations,
+} from "../../PersistenceError";
 import { ObjectStoreNames, SettingsKeys } from "../databaseSchema";
 import { openDatabase } from "../openDatabase";
 import { createIndexedDbSettingsRepository } from "./createIndexedDbSettingsRepository";
@@ -49,7 +53,13 @@ describe("IndexedDB settings repository reads", () => {
     });
     const repository = createIndexedDbSettingsRepository(database!);
 
-    await expect(repository.getSettings()).rejects.toBeDefined();
+    const readPromise = repository.getSettings();
+
+    await expect(readPromise).rejects.toBeInstanceOf(PersistenceError);
+    await expect(readPromise).rejects.toMatchObject({
+      operation: PersistenceOperations.Read,
+      cause: expect.any(Error),
+    });
   });
 });
 
@@ -106,6 +116,19 @@ describe("IndexedDB settings repository writes", () => {
 
     await expect(observedSavePromise).resolves.toBe("rejected");
     await expect(repository.getSettings()).resolves.toBeNull();
+  });
+
+  it("normalizes a native IndexedDB write failure", async () => {
+    const repository = createIndexedDbSettingsRepository(database!);
+    database!.close();
+
+    const savePromise = repository.saveSettings(validSettings);
+
+    await expect(savePromise).rejects.toBeInstanceOf(PersistenceError);
+    await expect(savePromise).rejects.toMatchObject({
+      operation: PersistenceOperations.Write,
+      cause: expect.any(DOMException),
+    });
   });
 });
 

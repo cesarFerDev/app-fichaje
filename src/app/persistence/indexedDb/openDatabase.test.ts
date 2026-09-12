@@ -1,8 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createTestDatabaseName,
   deleteTestDatabase,
 } from "../../../tests/indexedDbTestUtils";
+import { PersistenceError, PersistenceOperations } from "../PersistenceError";
 import {
   DATABASE_VERSION,
   ObjectStoreNames,
@@ -75,5 +76,20 @@ describe("IndexedDB schema", () => {
     expect(workdaysStore.autoIncrement).toBe(false);
     expect(dateKeyIndex.keyPath).toBe("dateKey");
     expect(dateKeyIndex.unique).toBe(true);
+  });
+
+  it("normalizes a database opening failure and retains its cause", async () => {
+    const cause = new DOMException("Database unavailable", "UnknownError");
+    vi.spyOn(indexedDB, "open").mockImplementation(() => {
+      throw cause;
+    });
+
+    const openPromise = openDatabase(databaseName);
+
+    await expect(openPromise).rejects.toBeInstanceOf(PersistenceError);
+    await expect(openPromise).rejects.toMatchObject({
+      operation: PersistenceOperations.Open,
+      cause,
+    });
   });
 });

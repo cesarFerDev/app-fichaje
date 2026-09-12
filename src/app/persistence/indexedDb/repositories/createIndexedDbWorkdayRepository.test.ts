@@ -9,6 +9,10 @@ import {
   deleteTestDatabase,
   waitForTransaction,
 } from "../../../../tests/indexedDbTestUtils";
+import {
+  PersistenceError,
+  PersistenceOperations,
+} from "../../PersistenceError";
 import { ObjectStoreNames } from "../databaseSchema";
 import { openDatabase } from "../openDatabase";
 import { createIndexedDbWorkdayRepository } from "./createIndexedDbWorkdayRepository";
@@ -79,7 +83,13 @@ describe("IndexedDB workday repository reads", () => {
     ]);
     const repository = createIndexedDbWorkdayRepository(database!);
 
-    await expect(repository.getWorkdays()).rejects.toBeDefined();
+    const readPromise = repository.getWorkdays();
+
+    await expect(readPromise).rejects.toBeInstanceOf(PersistenceError);
+    await expect(readPromise).rejects.toMatchObject({
+      operation: PersistenceOperations.Read,
+      cause: expect.any(Error),
+    });
   });
 
   it("rejects individually valid workdays when more than one is active", async () => {
@@ -170,9 +180,13 @@ describe("IndexedDB workday repository writes", () => {
   it("rejects an update for a missing UUID without inserting it", async () => {
     const repository = createIndexedDbWorkdayRepository(database!);
 
-    await expect(
-      repository.updateWorkday(completedWorkday),
-    ).rejects.toBeDefined();
+    const updatePromise = repository.updateWorkday(completedWorkday);
+
+    await expect(updatePromise).rejects.toBeInstanceOf(PersistenceError);
+    await expect(updatePromise).rejects.toMatchObject({
+      operation: PersistenceOperations.Write,
+      cause: expect.any(Error),
+    });
     await expect(repository.getWorkdays()).resolves.toEqual([]);
   });
 
